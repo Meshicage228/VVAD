@@ -1,0 +1,21 @@
+﻿№;Возраст;Семейное положение;Доходы;Наличие обеспечения
+1;47;married;1506;yes
+2;33;single;1;no
+3;35;married;high;yes
+4;28;single;447;yes
+5;42;divorced;2;yes
+6;58;;121;yes
+7;43;single;593;yes
+8;16;single;;yes
+9;25;single;1667;yes
+10;29;married;j;yes
+11;;married;;yes
+12;45;divorced;257;yes
+13;young;married;4;yes
+14;33;1;567;yes
+15;84;no;;yes
+16;;single;123;yes
+17;17;married;67;no
+18;old;married;9;yes
+19;45;divorced;56;yes
+20;44;married;7;yes
