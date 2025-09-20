@@ -25,40 +25,33 @@ NUMERIC_COLUMNS = [COL_AGE, COL_INCOME]
 
 # === Загрузка данных ===
 df = pd.read_csv(INPUT_FILE, sep=SEP, encoding=ENCODING)
-df_clean = df.copy()
 
 # === Очистка возраста ===
-df_clean[COL_AGE] = pd.to_numeric(df_clean[COL_AGE], errors="coerce")
-df_clean.loc[df_clean[COL_AGE] > MAX_AGE, COL_AGE] = np.nan
-df_clean.loc[df_clean[COL_AGE] < MIN_AGE, COL_AGE] = np.nan
-median_age = df_clean[COL_AGE].median()
-df_clean[COL_AGE].fillna(median_age, inplace=True)
-df_clean[COL_AGE] = df_clean[COL_AGE].astype(int)
+df[COL_AGE] = pd.to_numeric(df[COL_AGE], errors="coerce")
+df = df[(df[COL_AGE] >= MIN_AGE) & (df[COL_AGE] <= MAX_AGE)]
 
 # === Очистка семейного положения ===
-df_clean[COL_STATUS] = df_clean[COL_STATUS].str.lower()
-df_clean.loc[~df_clean[COL_STATUS].isin(VALID_MARITAL_STATUS), COL_STATUS] = np.nan
-most_frequent_status = df_clean[COL_STATUS].mode()[0]
-df_clean[COL_STATUS].fillna(most_frequent_status, inplace=True)
+df[COL_STATUS] = df[COL_STATUS].str.lower()
+df = df[df[COL_STATUS].isin(VALID_MARITAL_STATUS)]
 
 # === Очистка доходов ===
-df_clean[COL_INCOME] = pd.to_numeric(df_clean[COL_INCOME], errors="coerce")
-df_clean.loc[df_clean[COL_INCOME] < MIN_INCOME_THRESHOLD, COL_INCOME] = np.nan
-median_income = df_clean[COL_INCOME].median()
-df_clean[COL_INCOME].fillna(median_income, inplace=True)
+df[COL_INCOME] = pd.to_numeric(df[COL_INCOME], errors="coerce")
+df = df[df[COL_INCOME] >= MIN_INCOME_THRESHOLD]
 
-# === Обработка наличия обеспечения ===
-df_clean[COL_GUARANTEE] = df_clean[COL_GUARANTEE].str.lower().map({"yes": 1, "no": 0})
+# === Очистка наличия обеспечения ===
+df[COL_GUARANTEE] = df[COL_GUARANTEE].str.lower()
+df = df[df[COL_GUARANTEE].isin(["yes", "no"])]
+df[COL_GUARANTEE] = df[COL_GUARANTEE].map({"yes": 1, "no": 0})
 
 # === Нормализация числовых значений ===
 scaler = MinMaxScaler()
-df_clean[NUMERIC_COLUMNS] = scaler.fit_transform(df_clean[NUMERIC_COLUMNS])
+df[NUMERIC_COLUMNS] = scaler.fit_transform(df[NUMERIC_COLUMNS])
 
 # === One-Hot Encoding категориальных данных ===
-df_clean = pd.get_dummies(df_clean, columns=[COL_STATUS])
+df = pd.get_dummies(df, columns=[COL_STATUS])
 
 # === Сохранение результата ===
 os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
-df_clean.to_csv(OUTPUT_FILE, index=False, sep=SEP, encoding=ENCODING)
+df.to_csv(OUTPUT_FILE, index=False, sep=SEP, encoding=ENCODING)
 
-print(f"Очистка и нормализация завершены. Результат сохранен в файл: {OUTPUT_FILE}")
+print(f"Очистка, отбор, нормализация и кодирование завершены. Результат сохранен в файл: {OUTPUT_FILE}")
