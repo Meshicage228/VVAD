@@ -4,7 +4,7 @@ from sklearn.preprocessing import MinMaxScaler
 import os
 
 # === Пути к файлам ===
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # папка, где лежит скрипт
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE = os.path.join(BASE_DIR, "..", "source", "source_data_var_6.csv")
 OUTPUT_FILE = os.path.join(BASE_DIR, "..", "result", "cleaned_table.csv")
 
@@ -55,7 +55,7 @@ scaler = MinMaxScaler()
 df_clean[NUMERIC_COLUMNS] = scaler.fit_transform(df_clean[NUMERIC_COLUMNS])
 
 # === One-Hot Encoding категориальных данных ===
-df_clean = pd.get_dummies(df_clean, columns=[COL_STATUS])
+df_clean = pd.get_dummies(df_clean, columns=[COL_STATUS], dtype=int)
 
 # === Сохранение результата ===
 os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
